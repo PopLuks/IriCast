@@ -6,9 +6,9 @@ Proiect IoT pentru estimarea necesarului de apă al unei grădini folosind date 
 
 ## Echipa
 
-- **[Numele membrului 1]**
-- **[Numele membrului 2]**
-- **[Numele membrului 3]**
+- **Bancos Gabriel Razvan**
+- **Mirth Kevin**
+- **Pop Lucas**
 
 ## Scenariul IoT
 
