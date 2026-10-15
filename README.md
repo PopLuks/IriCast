@@ -1,4 +1,4 @@
-# 🌱 Irigare inteligentă cu Open-Meteo
+# 🌱 IriCast (Irigare inteligentă cu Open-Meteo)
 
 Proiect IoT pentru estimarea necesarului de apă al unei grădini folosind date meteorologice de la [Open-Meteo](https://open-meteo.com/en/docs). Sistemul combină precipitațiile, evapotranspirația de referință (ET₀) și prognoza meteo pentru a recomanda dacă o zonă ar trebui irigată. Obiectivul este reducerea irigărilor inutile și compararea unei strategii bazate pe vreme cu un program fix de irigare.
 
