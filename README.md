@@ -23,9 +23,21 @@
 
 ## Arhitectură
 
-`Open-Meteo API -> Python -> Rezultate`
+`Simulator -> MQTT Broker -> Gateway -> Backend -> PostgreSQL -> Grafana`
 
-Open-Meteo furnizează datele meteorologice. Python prelucrează datele și analizează condițiile asociate riscului de secetă. Proiectul nu include în prezent un gateway hardware sau un frontend separat.
+Simulatorul generează măsurători pe canalele statiei și le publică prin MQTT la brokerul
+Mosquitto. Gateway-ul se abonează, agreghează mesajele și le trimite in batch catre backend,
+care le scrie in PostgreSQL (cu extensia TimescaleDB). Grafana citeste din baza de date si
+afiseaza dashboard-ul.
+
+1. **Simulatorul** — stația virtuală. Generează măsurători pentru cele 4 canale (`temperature`, `humidity`, `precipitation`, `soil_moisture`) și le publică ca JSON pe topicuri `iricast/<senzor>` către broker. Fiecare mesaj: `sensor`, `value`, `unit`, `ts`, `quality`. E înlocuitorul senzorilor fizici.
+2. **MQTT Broker** (Mosquitto) — poștașul. Primește toate mesajele publicate pe `iricast/#` și le distribuie abonaților. Nu stochează nimic, nu procesează. Separă producătorii de consumatori: simulatorul nu știe cine ascultă.
+3. **Gateway** — colectorul. Un singur client MQTT abonat wildcard `iricast/#`. Bufferează mesajele (max 10.000, drop oldest la overflow), le trimite batch către backend: 50 mesaje sau 2s, care vine primul. Retry cu backoff exponențial (1s→60s) dacă backend e jos; statistici per senzor la 10s.
+4. **Backend** — API-ul. FastAPI cu pool de conexiuni psycopg. `POST /ingest` primește batch-ul (max 1000), INSERT cu `ON CONFLICT DO NOTHING` (dedup pe `ts+station+sensor`). Expune și endpointuri de citire: `/api/measurements`, `/api/hourly`, `/api/drought`, `/api/stats`. Singurul care atinge baza de date.
+5. **PostgreSQL + TimescaleDB** — memoria. Tabelul `measurements` e hypertable TimescaleDB. View-uri fac analiza: `measurements_hourly` (agregare orară cu `time_bucket`), `hourly_pivot` (un rând/oră cu toți senzorii), `v_drought` (ferestre glisante 72h precipitații / 24h temp+RH → indicatorii `dry_ref` și `dry_multi`).
+6. **Grafana** — ochii. Citește direct din PostgreSQL (view-urile) și desenează dashboard-ul: serii temporare, praguri secetă. Doar citire.
+
+Fiecare pas e decuplat: poți opri Grafana fără să pierzi ingest, repornești backend și gateway retrimite din buffer.
 
 ## Întrebarea de cercetare
 
