@@ -1,0 +1,217 @@
+{
+  "annotations": { "list": [] },
+  "editable": true,
+  "graphTooltip": 1,
+  "refresh": "5s",
+  "schemaVersion": 39,
+  "timezone": "utc",
+  "title": "IriCast – Statia Buniol",
+  "uid": "iricast-buniol",
+  "time": { "from": "2020-10-14T21:00:00Z", "to": "2026-10-30T00:00:00Z" },
+  "panels": [
+    {
+      "type": "stat",
+      "title": "Temperatura aer (ultima valoare)",
+      "gridPos": { "h": 4, "w": 6, "x": 0, "y": 0 },
+      "datasource": { "type": "grafana-postgresql-datasource", "uid": "iricast-db" },
+      "targets": [
+        {
+          "refId": "A",
+          "format": "table",
+          "rawQuery": true,
+          "rawSql": "SELECT ts AS time, value FROM measurements WHERE station='buniol' AND sensor='temperature' AND $__timeFilter(ts) ORDER BY ts DESC LIMIT 1"
+        }
+      ],
+      "fieldConfig": { "defaults": { "unit": "celsius", "decimals": 1 }, "overrides": [] },
+      "options": { "reduceOptions": { "calcs": ["lastNotNull"] } }
+    },
+    {
+      "type": "stat",
+      "title": "Umiditate relativa (ultima valoare)",
+      "gridPos": { "h": 4, "w": 6, "x": 6, "y": 0 },
+      "datasource": { "type": "grafana-postgresql-datasource", "uid": "iricast-db" },
+      "targets": [
+        {
+          "refId": "A",
+          "format": "table",
+          "rawQuery": true,
+          "rawSql": "SELECT ts AS time, value FROM measurements WHERE station='buniol' AND sensor='humidity' AND $__timeFilter(ts) ORDER BY ts DESC LIMIT 1"
+        }
+      ],
+      "fieldConfig": { "defaults": { "unit": "percent", "decimals": 0 }, "overrides": [] },
+      "options": { "reduceOptions": { "calcs": ["lastNotNull"] } }
+    },
+    {
+      "type": "stat",
+      "title": "Precipitatii ultimele 24h",
+      "gridPos": { "h": 4, "w": 6, "x": 12, "y": 0 },
+      "datasource": { "type": "grafana-postgresql-datasource", "uid": "iricast-db" },
+      "targets": [
+        {
+          "refId": "A",
+          "format": "table",
+          "rawQuery": true,
+          "rawSql": "SELECT hour AS time, precip_mm_sum FROM hourly_pivot WHERE station='buniol' AND $__timeFilter(hour) ORDER BY hour DESC LIMIT 24"
+        }
+      ],
+      "fieldConfig": { "defaults": { "unit": "lengthmm", "decimals": 1 }, "overrides": [] },
+      "options": { "reduceOptions": { "calcs": ["sum"] } }
+    },
+    {
+      "type": "stat",
+      "title": "Umiditate sol – estimare model (ultima valoare)",
+      "gridPos": { "h": 4, "w": 6, "x": 18, "y": 0 },
+      "datasource": { "type": "grafana-postgresql-datasource", "uid": "iricast-db" },
+      "targets": [
+        {
+          "refId": "A",
+          "format": "table",
+          "rawQuery": true,
+          "rawSql": "SELECT ts AS time, value FROM measurements WHERE station='buniol' AND sensor='soil_moisture' AND $__timeFilter(ts) ORDER BY ts DESC LIMIT 1"
+        }
+      ],
+      "fieldConfig": { "defaults": { "decimals": 3, "postfix": " m³/m³" }, "overrides": [] },
+      "options": { "reduceOptions": { "calcs": ["lastNotNull"] } }
+    },
+    {
+      "type": "timeseries",
+      "title": "Temperatura aer (°C)",
+      "gridPos": { "h": 7, "w": 12, "x": 0, "y": 4 },
+      "datasource": { "type": "grafana-postgresql-datasource", "uid": "iricast-db" },
+      "targets": [
+        {
+          "refId": "A",
+          "format": "time_series",
+          "rawQuery": true,
+          "rawSql": "SELECT ts AS time, value AS \"temperatura\" FROM measurements WHERE station='buniol' AND sensor='temperature' AND $__timeFilter(ts) ORDER BY ts"
+        }
+      ],
+      "fieldConfig": { "defaults": { "unit": "celsius", "custom": { "lineWidth": 1, "fillOpacity": 0, "showPoints": "never" } }, "overrides": [] },
+      "options": { "legend": { "displayMode": "list", "placement": "bottom" }, "tooltip": { "mode": "single" } }
+    },
+    {
+      "type": "timeseries",
+      "title": "Umiditate relativa (%)",
+      "gridPos": { "h": 7, "w": 12, "x": 12, "y": 4 },
+      "datasource": { "type": "grafana-postgresql-datasource", "uid": "iricast-db" },
+      "targets": [
+        {
+          "refId": "A",
+          "format": "time_series",
+          "rawQuery": true,
+          "rawSql": "SELECT ts AS time, value AS \"umiditate relativa\" FROM measurements WHERE station='buniol' AND sensor='humidity' AND $__timeFilter(ts) ORDER BY ts"
+        }
+      ],
+      "fieldConfig": { "defaults": { "unit": "percent", "custom": { "lineWidth": 1, "fillOpacity": 0, "showPoints": "never" } }, "overrides": [] },
+      "options": { "legend": { "displayMode": "list", "placement": "bottom" }, "tooltip": { "mode": "single" } }
+    },
+    {
+      "type": "timeseries",
+      "title": "Precipitatii orare (mm)",
+      "gridPos": { "h": 7, "w": 12, "x": 0, "y": 11 },
+      "datasource": { "type": "grafana-postgresql-datasource", "uid": "iricast-db" },
+      "targets": [
+        {
+          "refId": "A",
+          "format": "time_series",
+          "rawQuery": true,
+          "rawSql": "SELECT hour AS time, precip_mm_sum AS \"precipitatii\" FROM hourly_pivot WHERE station='buniol' AND $__timeFilter(hour) ORDER BY hour"
+        }
+      ],
+      "fieldConfig": { "defaults": { "unit": "lengthmm", "custom": { "drawStyle": "bars", "fillOpacity": 60, "lineWidth": 0 } }, "overrides": [] },
+      "options": { "legend": { "displayMode": "list", "placement": "bottom" }, "tooltip": { "mode": "single" } }
+    },
+    {
+      "type": "timeseries",
+      "title": "Umiditate sol – estimare model (m³/m³)",
+      "gridPos": { "h": 7, "w": 12, "x": 12, "y": 11 },
+      "datasource": { "type": "grafana-postgresql-datasource", "uid": "iricast-db" },
+      "targets": [
+        {
+          "refId": "A",
+          "format": "time_series",
+          "rawQuery": true,
+          "rawSql": "SELECT hour AS time, soil_m3_avg AS \"umiditate sol (estimare model)\" FROM hourly_pivot WHERE station='buniol' AND $__timeFilter(hour) ORDER BY hour"
+        }
+      ],
+      "fieldConfig": { "defaults": { "decimals": 3, "custom": { "lineWidth": 1, "fillOpacity": 10, "showPoints": "never" } }, "overrides": [] },
+      "options": { "legend": { "displayMode": "list", "placement": "bottom" }, "tooltip": { "mode": "single" } }
+    },
+    {
+      "type": "timeseries",
+      "title": "Precipitatii cumulate 72h vs prag (2 mm)",
+      "gridPos": { "h": 7, "w": 12, "x": 0, "y": 18 },
+      "datasource": { "type": "grafana-postgresql-datasource", "uid": "iricast-db" },
+      "targets": [
+        {
+          "refId": "A",
+          "format": "time_series",
+          "rawQuery": true,
+          "rawSql": "SELECT hour AS time, precip_72h_mm AS \"precip 72h\" FROM v_drought WHERE station='buniol' AND $__timeFilter(hour) ORDER BY hour"
+        },
+        {
+          "refId": "B",
+          "format": "time_series",
+          "rawQuery": true,
+          "rawSql": "SELECT hour AS time, 2.0 AS \"prag secetos (2 mm)\" FROM v_drought WHERE station='buniol' AND $__timeFilter(hour) ORDER BY hour"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": { "unit": "lengthmm", "custom": { "lineWidth": 1, "fillOpacity": 0, "showPoints": "never" } },
+        "overrides": [
+          {
+            "matcher": { "id": "byName", "options": "prag secetos (2 mm)" },
+            "properties": [ { "id": "custom.lineStyle", "value": { "dash": [10, 10], "fill": "dash" } }, { "id": "color", "value": { "mode": "fixed", "fixedColor": "red" } } ]
+          }
+        ]
+      },
+      "options": { "legend": { "displayMode": "list", "placement": "bottom" }, "tooltip": { "mode": "multi" } }
+    },
+    {
+      "type": "state-timeline",
+      "title": "Indicatori risc seceta (0 = umed, 1 = secetos, -1 = date insuficiente)",
+      "gridPos": { "h": 7, "w": 12, "x": 12, "y": 18 },
+      "datasource": { "type": "grafana-postgresql-datasource", "uid": "iricast-db" },
+      "targets": [
+        {
+          "refId": "A",
+          "format": "time_series",
+          "rawQuery": true,
+          "rawSql": "SELECT hour AS time, COALESCE((dry_ref)::int, -1) AS \"referinta (precip 72h)\", COALESCE((dry_multi)::int, -1) AS \"multi-indicator\" FROM v_drought WHERE station='buniol' AND $__timeFilter(hour) ORDER BY hour"
+        }
+      ],
+      "fieldConfig": { "defaults": { "custom": {} }, "overrides": [] },
+      "options": { "legend": { "displayMode": "list", "placement": "bottom" }, "mergeValues": true }
+    },
+    {
+      "type": "table",
+      "title": "Acoperire date per senzor (interval selectat)",
+      "gridPos": { "h": 6, "w": 12, "x": 0, "y": 25 },
+      "datasource": { "type": "grafana-postgresql-datasource", "uid": "iricast-db" },
+      "targets": [
+        {
+          "refId": "A",
+          "format": "table",
+          "rawQuery": true,
+          "rawSql": "SELECT sensor, count(value) AS \"valori ok\", count(*) FILTER (WHERE quality='missing') AS \"valori lipsa\", min(ts) AS \"prima masuratoare\", max(ts) AS \"ultima masuratoare\" FROM measurements WHERE station='buniol' AND $__timeFilter(ts) GROUP BY sensor ORDER BY sensor"
+        }
+      ],
+      "options": { "showHeader": true }
+    },
+    {
+      "type": "table",
+      "title": "Sumar indicatori de seceta (interval selectat)",
+      "gridPos": { "h": 6, "w": 12, "x": 12, "y": 25 },
+      "datasource": { "type": "grafana-postgresql-datasource", "uid": "iricast-db" },
+      "targets": [
+        {
+          "refId": "A",
+          "format": "table",
+          "rawQuery": true,
+          "rawSql": "SELECT count(*) FILTER (WHERE dry_ref) AS \"ore secetoase (referinta)\", count(*) FILTER (WHERE dry_multi) AS \"ore risc (multi-indicator)\", count(*) FILTER (WHERE dry_ref AND dry_multi) AS \"ambele\", count(*) FILTER (WHERE dry_ref AND NOT dry_multi) AS \"doar referinta\", count(*) FILTER (WHERE NOT dry_ref AND dry_multi) AS \"doar multi\", count(*) FILTER (WHERE dry_ref IS NULL OR dry_multi IS NULL) AS \"ore date insuficiente\" FROM v_drought WHERE station='buniol' AND $__timeFilter(hour)"
+        }
+      ],
+      "options": { "showHeader": true }
+    }
+  ]
+}

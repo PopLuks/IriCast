@@ -1,0 +1,43 @@
+{
+  "source_file": "Open-meteo-Iricast Buniol drag de rosii.csv",
+  "endpoint": "https://archive-api.open-meteo.com/v1/archive (export manual)",
+  "latitude": 47.205624,
+  "longitude": 26.427406,
+  "location_label": "Buniol",
+  "period_utc": {
+    "start": "2020-10-14T21:00:00+00:00",
+    "end": "2026-10-29T20:00:00+00:00",
+    "rows": 52944
+  },
+  "resolution": "hourly",
+  "timezone": {
+    "source_local_offset_seconds": 10800,
+    "converted_to": "UTC"
+  },
+  "variables": {
+    "temperature": {
+      "unit": "°C"
+    },
+    "humidity": {
+      "unit": "%"
+    },
+    "precipitation": {
+      "unit": "mm"
+    },
+    "soil_moisture": {
+      "unit": "m3/m3"
+    }
+  },
+  "missing_values": {
+    "temperature": 0,
+    "humidity": 0,
+    "precipitation": 0,
+    "soil_moisture": 0
+  },
+  "dropped_duplicate_rows": 0,
+  "rows_cropped": 0,
+  "prepared_date_utc": "2026-10-31T19:48:32.089954+00:00",
+  "license": "CC BY 4.0",
+  "attribution": "Open-Meteo (https://open-meteo.com), date ERA5 reanalysis",
+  "notes": "soil_moisture (strat 0-7 cm) este estimare de model, nu masuratoare directa de senzor."
+}

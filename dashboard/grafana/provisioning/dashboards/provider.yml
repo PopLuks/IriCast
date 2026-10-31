@@ -1,0 +1,11 @@
+apiVersion: 1
+providers:
+  - name: IriCast
+    orgId: 1
+    folder: IriCast
+    type: file
+    disableDeletion: false
+    updateIntervalSeconds: 10
+    allowUiUpdates: true
+    options:
+      path: ../../dashboards
